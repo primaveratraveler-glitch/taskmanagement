@@ -1,0 +1,24 @@
+{% set today = namespace(value=cycler) %}
+{% set danger = false %}
+
+{% if task.is_important and task.due_date %}
+  {% if task.due_date <= (datetime.date.today() + datetime.timedelta(days=1)).isoformat() %}
+    {% set danger = true %}
+  {% endif %}
+{% endif %}
+
+<div class="task-card {% if danger %}danger{% endif %}">
+    <strong>{{ task.title }}</strong><br>
+
+    {% if task.is_important %}
+      <span class="important">重要</span>
+    {% endif %}
+
+    {% if task.due_date %}
+      <div>締切：{{ task.due_date }}</div>
+    {% endif %}
+
+    {% if danger %}
+      <div class="alert">👹 DANGER!! 締切間近</div>
+    {% endif %}
+</div>

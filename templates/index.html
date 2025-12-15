@@ -1,0 +1,52 @@
+<h1>タスク管理</h1>
+
+<div style="display:flex; gap:20px;">
+
+  <!-- TODO -->
+  <div>
+    <h2>📝 TODO</h2>
+    {% for task in tasks %}
+      {% if task.status == "todo" %}
+        <div>
+          <strong>{{ task.title }}</strong><br>
+          期限: {{ task.due_date }}<br>
+
+          <a href="/update_status/{{ task.id }}/doing">▶ Doingへ</a>
+        </div>
+        <hr>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <!-- DOING -->
+  <div>
+    <h2>🚧 DOING</h2>
+    {% for task in tasks %}
+      {% if task.status == "doing" %}
+        <div>
+          <strong>{{ task.title }}</strong><br>
+          期限: {{ task.due_date }}<br>
+
+          <a href="/update_status/{{ task.id }}/done">✅ Doneへ</a>
+        </div>
+        <hr>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <!-- DONE -->
+  <div>
+    <h2>🎉 DONE</h2>
+    {% for task in tasks %}
+      {% if task.status == "done" %}
+        <div>
+          <strong>{{ task.title }}</strong>
+        </div>
+        <hr>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+</div>
+
+<p><a href="/add_form">＋ タスク追加</a></p>
