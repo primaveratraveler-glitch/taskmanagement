@@ -8,26 +8,27 @@
     <h1>タスク追加</h1>
 
     <form action="/add" method="post">
-    <p>
-        タイトル<br>
-        <input type="text" name="title" required>
-    </p>
+        <div>
+            <label>タイトル</label><br>
+            <input type="text" name="title" required>
+        </div>
 
-    <p>
-        締切日<br>
-        <input type="date" name="due_date">
-    </p>
+        <div>
+            <label>優先度</label><br>
+            <select name="priority">
+                <option value="high">高</option>
+                <option value="middle">中</option>
+                <option value="low">低</option>
+            </select>
+        </div>
 
-    <p>
-        <label>
-            <input type="checkbox" name="is_important">
-            重要
-        </label>
-    </p>
+        <div>
+            <label>締切日</label><br>
+            <input type="date" name="due_date">
+        </div>
 
-    <button type="submit">追加</button>
-</form>
-
+        <button type="submit">追加</button>
+    </form>
 
     <p><a href="/">戻る</a></p>
 </body>
