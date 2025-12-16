@@ -1,24 +1,17 @@
-{% set today = namespace(value=cycler) %}
-{% set danger = false %}
+<div class="task-card {{ task.alert_level }}">
+  <strong>{{ task.title }}</strong><br>
 
-{% if task.is_important and task.due_date %}
-  {% if task.due_date <= (datetime.date.today() + datetime.timedelta(days=1)).isoformat() %}
-    {% set danger = true %}
+  {% if task.alert_level == "danger" %}
+    <div class="alert-text">👹 DANGER!! 締切間近</div>
+  {% elif task.alert_level == "warning" %}
+    <div class="alert-text warning-text">⚠ 期限注意</div>
   {% endif %}
-{% endif %}
 
-<div class="task-card {% if danger %}danger{% endif %}">
-    <strong>{{ task.title }}</strong><br>
+  期限: {{ task.due_date }}<br>
 
-    {% if task.is_important %}
-      <span class="important">重要</span>
-    {% endif %}
-
-    {% if task.due_date %}
-      <div>締切：{{ task.due_date }}</div>
-    {% endif %}
-
-    {% if danger %}
-      <div class="alert">👹 DANGER!! 締切間近</div>
-    {% endif %}
+  {% if task.status == "todo" %}
+    <a href="/update_status/{{ task.id }}/doing">▶ Doingへ</a>
+  {% elif task.status == "doing" %}
+    <a href="/update_status/{{ task.id }}/done">✅ Doneへ</a>
+  {% endif %}
 </div>
