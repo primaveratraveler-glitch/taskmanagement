@@ -1,48 +1,53 @@
-<h1>タスク管理</h1>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>副業タスク管理</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
 
-<div style="display:flex; gap:20px;">
+  {% if has_danger %}
+<div id="danger-overlay">
+  <div class="danger-box">
+    <h1>👹 DANGER !!</h1>
+    <p>重要タスクの締切が迫っています</p>
+    <button onclick="closeDanger()">確認した</button>
+  </div>
+</div>
+{% endif %}
 
-  <!-- TODO -->
-  <div>
-    <h2>📝 TODO</h2>
+
+<h1>副業タスク管理</h1>
+
+<div class="kanban">
+
+  <!-- 未着手 -->
+  <div class="column">
+    <h2>未着手</h2>
     {% for task in tasks %}
       {% if task.status == "todo" %}
-        <div>
-          <strong>{{ task.title }}</strong><br>
-          期限: {{ task.due_date }}<br>
-
-          <a href="/update_status/{{ task.id }}/doing">▶ Doingへ</a>
-        </div>
-        <hr>
+        {% include "task_card.html" %}
       {% endif %}
     {% endfor %}
   </div>
 
-  <!-- DOING -->
-  <div>
-    <h2>🚧 DOING</h2>
+  <!-- 進行中 -->
+  <div class="column">
+    <h2>進行中</h2>
     {% for task in tasks %}
       {% if task.status == "doing" %}
-        <div>
-          <strong>{{ task.title }}</strong><br>
-          期限: {{ task.due_date }}<br>
-
-          <a href="/update_status/{{ task.id }}/done">✅ Doneへ</a>
-        </div>
-        <hr>
+        {% include "task_card.html" %}
       {% endif %}
     {% endfor %}
   </div>
 
-  <!-- DONE -->
-  <div>
-    <h2>🎉 DONE</h2>
+  <!-- 完了 -->
+  <div class="column">
+    <h2>完了</h2>
     {% for task in tasks %}
       {% if task.status == "done" %}
-        <div>
-          <strong>{{ task.title }}</strong>
-        </div>
-        <hr>
+        {% include "task_card.html" %}
       {% endif %}
     {% endfor %}
   </div>
@@ -50,3 +55,17 @@
 </div>
 
 <p><a href="/add_form">＋ タスク追加</a></p>
+
+
+<script>
+function closeDanger() {
+  const overlay = document.getElementById("danger-overlay");
+  if (overlay) {
+    overlay.style.display = "none";
+  }
+}
+</script>
+
+
+</body>
+</html>
