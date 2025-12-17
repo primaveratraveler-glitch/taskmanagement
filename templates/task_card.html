@@ -1,17 +1,27 @@
-<div class="task-card {{ task.alert_level }}">
-  <strong>{{ task.title }}</strong><br>
+<div class="task-card
+     {% if task.alert_level == 'danger' %} danger
+     {% elif task.alert_level == 'warning' %} warning
+     {% endif %}">
 
-  {% if task.alert_level == "danger" %}
-    <div class="alert-text">👹 DANGER!! 締切間近</div>
-  {% elif task.alert_level == "warning" %}
-    <div class="alert-text warning-text">⚠ 期限注意</div>
+  <h3>{{ task.title }}</h3>
+
+  {% if task.due_date %}
+    <p>期限：{{ task.due_date }}</p>
   {% endif %}
 
-  期限: {{ task.due_date }}<br>
+  <div class="actions">
+    {% if task.status != 'todo' %}
+      <a href="/update_status/{{ task.id }}/todo">未着手</a>
+    {% endif %}
+    {% if task.status != 'doing' %}
+      <a href="/update_status/{{ task.id }}/doing">進行中</a>
+    {% endif %}
+    {% if task.status != 'done' %}
+      <a href="/update_status/{{ task.id }}/done">完了</a>
+    {% endif %}
 
-  {% if task.status == "todo" %}
-    <a href="/update_status/{{ task.id }}/doing">▶ Doingへ</a>
-  {% elif task.status == "doing" %}
-    <a href="/update_status/{{ task.id }}/done">✅ Doneへ</a>
-  {% endif %}
+    {% if task.status == 'done' %}
+      <a href="/delete/{{ task.id }}" class="delete">削除</a>
+    {% endif %}
+  </div>
 </div>
