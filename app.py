@@ -1,8 +1,11 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
 from datetime import datetime, date
+from flask import session
 
 app = Flask(__name__)
+app.secret_key = "secret-key-for-danger-alert"
+
 
 def get_db_connection():
     conn = sqlite3.connect("tasks.db")
@@ -17,12 +20,16 @@ def judge_alert(task):
     today = date.today()
     days_left = (due - today).days
 
-    if task["is_important"] == 1 and days_left <= 3:
+    if days_left < 0:
+        return "danger"      # 期限切れ
+    elif days_left <= 3:
         return "danger"
     elif days_left <= 7:
         return "warning"
     else:
-        return "safe"
+        return None
+
+
 
 @app.route("/")
 def index():
@@ -43,11 +50,17 @@ def index():
             has_danger = True
         tasks_with_alert.append(task)
 
+    # 👇 セッションを毎回リセット（重要）
+    session.pop("danger_shown", None)
+
+    show_danger = has_danger
+
     return render_template(
         "index.html",
         tasks=tasks_with_alert,
-        has_danger=has_danger
+        has_danger=show_danger
     )
+
 
 
 @app.route("/add_form")
@@ -58,20 +71,20 @@ def add_form():
 def add_task():
     title = request.form["title"]
     due_date = request.form["due_date"]
-    is_important = 1 if "is_important" in request.form else 0
 
     conn = get_db_connection()
     conn.execute(
         """
-        INSERT INTO tasks (title, status, priority, due_date, is_important)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO tasks (title, status, due_date)
+        VALUES (?, ?, ?)
         """,
-        (title, "todo", "normal", due_date, is_important)
+        (title, "todo", due_date)
     )
     conn.commit()
     conn.close()
 
     return redirect("/")
+
 
 @app.route("/update_status/<int:task_id>/<new_status>")
 def update_status(task_id, new_status):
@@ -79,6 +92,18 @@ def update_status(task_id, new_status):
     conn.execute(
         "UPDATE tasks SET status = ? WHERE id = ?",
         (new_status, task_id)
+    )
+    conn.commit()
+    conn.close()
+    return redirect("/")
+
+
+@app.route("/delete/<int:task_id>")
+def delete_task(task_id):
+    conn = get_db_connection()
+    conn.execute(
+        "DELETE FROM tasks WHERE id = ?",
+        (task_id,)
     )
     conn.commit()
     conn.close()
